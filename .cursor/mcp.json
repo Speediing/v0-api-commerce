@@ -1,0 +1,7 @@
+{
+    "mcpServers": {
+      "server-name": {
+        "url": "https://mcp.v0.dev/sse"
+      }
+    }
+  }
