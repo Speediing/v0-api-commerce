@@ -1,29 +1,32 @@
 import { ComponentData } from "@/components/Builder";
 
-// Business data interface for landing page generation
-interface BusinessData {
-  businessName: string;
+// Store data interface for ecommerce store generation
+export interface StoreData {
+  storeName: string;
   industry: string;
+  productCategories: string[];
   targetAudience: string;
-  mainGoal: string;
-  keyBenefits: string[];
-  callToAction: string;
+  storeDescription: string;
+  paymentMethods: string[];
+  shippingInfo: string;
   contactInfo: string;
   brandColors: {
     primary: string;
     secondary: string;
   };
-  tone: string;
+  storeStyle: string;
+  featuredProducts?: string[];
+  currency: string;
 }
 
-interface GeneratedLandingPage {
+export interface GeneratedStore {
   id: string;
   generatedAt: string;
-  businessData: BusinessData;
+  storeData: StoreData;
   v0ChatId?: string;
   v0Url?: string;
   demo?: string; // Added for iframe URL
-  content: string; // Changed from html to content
+  content: string; // The generated store code
   _isMock?: boolean; // Added for mock indicator
 }
 
@@ -48,7 +51,7 @@ interface V0ApiData {
     imageGenerations: boolean;
     thinking: boolean;
   };
-  chatPrivacy?: string;
+  chatPrivacy?: "private" | "public" | "team-edit" | "team" | "unlisted";
 }
 
 // Helper function to call v0 API via server-side endpoint
@@ -109,41 +112,48 @@ export async function generateComponentWithV0(
   }
 }
 
-export async function generateLandingPageWithV0(
-  businessData: BusinessData
-): Promise<GeneratedLandingPage> {
+export async function generateStoreWithV0(
+  storeData: StoreData
+): Promise<GeneratedStore> {
   try {
-    // Create a comprehensive prompt for the landing page
-    const prompt = `Create a professional, modern landing page for email marketing campaigns. Here are the details:
+    // Create a focused prompt for customizing the existing ecommerce template
+    const prompt = `Please customize this ecommerce store template with the following brand details:
 
-**Business:** ${businessData.businessName}
-**Industry:** ${businessData.industry}
-**Target Audience:** ${businessData.targetAudience}
-**Main Goal:** ${businessData.mainGoal}
-**Key Benefits:** 
-${businessData.keyBenefits.map((benefit) => `- ${benefit}`).join("\n")}
-**Call to Action:** ${businessData.callToAction}
-**Brand Colors:** Primary: ${businessData.brandColors.primary}, Secondary: ${
-      businessData.brandColors.secondary
+**Store Name:** ${storeData.storeName}
+**Industry:** ${storeData.industry}
+**Target Audience:** ${storeData.targetAudience}
+**Store Description:** ${storeData.storeDescription}
+**Brand Colors:** Primary: ${storeData.brandColors.primary}, Secondary: ${
+      storeData.brandColors.secondary
     }
-**Tone:** ${businessData.tone}
+**Style:** ${storeData.storeStyle}
 ${
-  businessData.contactInfo
-    ? `**Contact Info:** ${businessData.contactInfo}`
+  storeData.shippingInfo
+    ? `**Shipping Info:** ${storeData.shippingInfo}`
+    : ""
+}
+${
+  storeData.contactInfo
+    ? `**Contact Info:** ${storeData.contactInfo}`
     : ""
 }
 
-Please create a complete landing page with:
-1. Hero section with business name, compelling headline, and key benefits
-2. Professional styling using the brand colors provided
-3. Clear call-to-action buttons
-4. Responsive design that works on mobile and desktop
-5. Modern, clean design optimized for email marketing conversions
-6. Include any contact information provided
+Please update the existing template to:
+- Replace placeholder store name with "${storeData.storeName}"
+- Apply the brand colors (${storeData.brandColors.primary} primary, ${storeData.brandColors.secondary} secondary)
+- Update content to match the ${storeData.industry} industry
+- Adjust styling to be ${storeData.storeStyle.toLowerCase()}
+- Update any placeholder text to reflect the target audience and store description
+- Ensure PayPal remains the payment method
+${storeData.shippingInfo ? `- Update shipping information to: ${storeData.shippingInfo}` : ""}
 
-Make it visually appealing and conversion-focused for ${businessData.tone.toLowerCase()} tone.`;
+Keep all existing functionality and layout - just customize the branding, colors, and content.`;
 
     // Call our API endpoint which handles the v0 integration
+    // The API will:
+    // 1. Try to fork from the ecommerce template (Dpf8aaD2Wfw)
+    // 2. Send the re-theming/customization prompt as a second message to the forked template
+    // 3. Fallback to template-inspired approach if forking fails
     const response = await callV0API("chats", {
       message: prompt,
       modelConfiguration: {
@@ -154,37 +164,37 @@ Make it visually appealing and conversion-focused for ${businessData.tone.toLowe
       chatPrivacy: "private",
     });
 
-    // Extract the generated content
-    const generatedPage: GeneratedLandingPage = {
-      id: `v0-landing-${response.id}`,
+    // Extract the generated store content
+    const generatedStore: GeneratedStore = {
+      id: `v0-store-${response.id}`,
       generatedAt: new Date().toISOString(),
-      businessData,
+      storeData,
       v0ChatId: response.id,
       v0Url: response.url,
       demo: response.demo, // The iframe URL for preview
-      content: response.text || "", // The generated React component code
+      content: response.text || "", // The generated store React component code
     };
 
-    return generatedPage;
+    return generatedStore;
   } catch (error) {
-    console.error("Error generating landing page with V0:", error);
+    console.error("Error generating store with V0:", error);
     throw new Error(
-      `Failed to generate landing page: ${
+      `Failed to generate store: ${
         error instanceof Error ? error.message : "Unknown error"
       }`
     );
   }
 }
 
-export async function regenerateLandingPage(
+export async function regenerateStore(
   chatId: string,
   feedback: string
-): Promise<GeneratedLandingPage> {
+): Promise<GeneratedStore> {
   try {
     // Send a message to the existing chat with feedback
     const messageResponse: V0MessageResponse = await callV0API("message", {
       chatId,
-      message: `Please refine the landing page based on this feedback: ${feedback}`,
+      message: `Please refine the ecommerce store based on this feedback: ${feedback}`,
     });
 
     // Get the updated chat data
@@ -193,31 +203,31 @@ export async function regenerateLandingPage(
     });
 
     // Extract the updated content
-    let htmlContent = "";
+    let storeContent = "";
 
     if (messageResponse.files && messageResponse.files.length > 0) {
-      const htmlFile = messageResponse.files.find(
+      const storeFile = messageResponse.files.find(
         (file: V0File) =>
           file.lang === "tsx" || file.lang === "jsx" || file.lang === "html"
       );
 
-      htmlContent = htmlFile?.source || messageResponse.text || "";
+      storeContent = storeFile?.source || messageResponse.text || "";
     } else {
-      htmlContent = messageResponse.text || "";
+      storeContent = messageResponse.text || "";
     }
 
     return {
-      id: `v0-landing-${chatId}-updated`,
+      id: `v0-store-${chatId}-updated`,
       generatedAt: new Date().toISOString(),
-      businessData: {} as BusinessData, // Would need to be stored/retrieved
+      storeData: {} as StoreData, // Would need to be stored/retrieved
       v0ChatId: chatId,
       v0Url: chatResponse.url,
-      content: htmlContent,
+      content: storeContent,
     };
   } catch (error) {
-    console.error("Error regenerating landing page:", error);
+    console.error("Error regenerating store:", error);
     throw new Error(
-      `Failed to regenerate landing page: ${
+      `Failed to regenerate store: ${
         error instanceof Error ? error.message : "Unknown error"
       }`
     );

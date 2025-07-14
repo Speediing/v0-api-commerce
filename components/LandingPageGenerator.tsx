@@ -1,59 +1,33 @@
 "use client";
 
 import React, { useState } from "react";
-import { Mail, Sparkles, Download, RotateCcw } from "lucide-react";
-import { BusinessQuestionnaire } from "./BusinessQuestionnaire";
-import { LandingPagePreview } from "./LandingPagePreview";
-import { generateLandingPageWithV0 } from "@/lib/v0-client";
+import { ShoppingBag, Sparkles, Download, RotateCcw } from "lucide-react";
+import { StoreQuestionnaire } from "./StoreQuestionnaire";
+import { StorePreview } from "./StorePreview";
+import { generateStoreWithV0, type StoreData, type GeneratedStore } from "@/lib/v0-client";
 
-interface BusinessData {
-  businessName: string;
-  industry: string;
-  targetAudience: string;
-  mainGoal: string;
-  keyBenefits: string[];
-  callToAction: string;
-  contactInfo: string;
-  brandColors: {
-    primary: string;
-    secondary: string;
-  };
-  tone: string;
-}
-
-interface GeneratedLandingPage {
-  id: string;
-  generatedAt: string;
-  businessData: BusinessData;
-  v0ChatId?: string;
-  v0Url?: string;
-  demo?: string;
-  content: string;
-  _isMock?: boolean;
-}
-
-export function LandingPageGenerator() {
+export function StoreGenerator() {
   const [step, setStep] = useState<"questionnaire" | "preview" | "editing">(
     "questionnaire"
   );
-  const [businessData, setBusinessData] = useState<BusinessData | null>(null);
-  const [generatedPage, setGeneratedPage] =
-    useState<GeneratedLandingPage | null>(null);
+  const [storeData, setStoreData] = useState<StoreData | null>(null);
+  const [generatedStore, setGeneratedStore] =
+    useState<GeneratedStore | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleQuestionnaireComplete = async (data: BusinessData) => {
-    setBusinessData(data);
+  const handleQuestionnaireComplete = async (data: StoreData) => {
+    setStoreData(data);
     setIsGenerating(true);
     setError(null);
 
     try {
-      const result = await generateLandingPageWithV0(data);
-      setGeneratedPage(result);
+      const result = await generateStoreWithV0(data);
+      setGeneratedStore(result);
       setStep("preview");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to generate landing page"
+        err instanceof Error ? err.message : "Failed to generate store"
       );
     } finally {
       setIsGenerating(false);
@@ -61,17 +35,17 @@ export function LandingPageGenerator() {
   };
 
   const handleRegenerate = async () => {
-    if (!businessData) return;
+    if (!storeData) return;
 
     setIsGenerating(true);
     setError(null);
 
     try {
-      const result = await generateLandingPageWithV0(businessData);
-      setGeneratedPage(result);
+      const result = await generateStoreWithV0(storeData);
+      setGeneratedStore(result);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to regenerate landing page"
+        err instanceof Error ? err.message : "Failed to regenerate store"
       );
     } finally {
       setIsGenerating(false);
@@ -80,8 +54,8 @@ export function LandingPageGenerator() {
 
   const handleStartOver = () => {
     setStep("questionnaire");
-    setBusinessData(null);
-    setGeneratedPage(null);
+    setStoreData(null);
+    setGeneratedStore(null);
     setError(null);
   };
 
@@ -92,12 +66,12 @@ export function LandingPageGenerator() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
-                <Mail className="w-5 h-5 text-yellow-900" />
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <ShoppingBag className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  Landing Page Generator
+                  PayPal Store Builder
                 </h1>
               </div>
             </div>
@@ -120,35 +94,35 @@ export function LandingPageGenerator() {
         {step === "questionnaire" && (
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-8 h-8 text-yellow-900" />
+              <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-8 h-8 text-white" />
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Create Your Perfect Landing Page
+                Build Your PayPal Store
               </h2>
               <p className="text-lg text-gray-600">
-                Answer a few questions about your business and we&apos;ll
-                generate a professional landing page tailored to your email
-                marketing campaigns.
+                Answer a few questions about your store and we&apos;ll
+                generate a professional ecommerce website with integrated
+                PayPal payments ready to sell your products.
               </p>
             </div>
 
-            <BusinessQuestionnaire
+            <StoreQuestionnaire
               onComplete={handleQuestionnaireComplete}
               isLoading={isGenerating}
             />
           </div>
         )}
 
-        {step === "preview" && generatedPage && (
+        {step === "preview" && generatedStore && (
           <div>
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Your Landing Page
+                  Your PayPal Store
                 </h2>
                 <p className="text-gray-600">
-                  Generated for {businessData?.businessName}
+                  Generated for {storeData?.storeName}
                 </p>
               </div>
 
@@ -162,14 +136,14 @@ export function LandingPageGenerator() {
                   <span>Regenerate</span>
                 </button>
 
-                <button className="flex items-center space-x-2 px-4 py-2 bg-yellow-400 text-yellow-900 rounded-md hover:bg-yellow-500">
+                <button className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
                   <Download className="w-4 h-4" />
                   <span>Export</span>
                 </button>
               </div>
             </div>
 
-            <LandingPagePreview page={generatedPage} isLoading={isGenerating} />
+            <StorePreview store={generatedStore} isLoading={isGenerating} />
           </div>
         )}
 

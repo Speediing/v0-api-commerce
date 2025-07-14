@@ -1,34 +1,83 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { ChatsCreateRequest, ChatsCreateResponse, ChatsCreateMessageRequest } from 'v0-sdk';
 
-// Import the real v0 SDK
-// Note: You'll need to set V0_API_KEY environment variable
-const createV0Chat = async (
-  message: string,
-  modelConfiguration: Record<string, unknown>,
-  chatPrivacy:
-    | "private"
-    | "public"
-    | "team-edit"
-    | "team"
-    | "unlisted" = "private"
-) => {
+const ECOMMERCE_TEMPLATE_CHAT_ID = "Dpf8aaD2Wfw";
+
+// Try to fork from the ecommerce template chat
+const forkV0Chat = async (
+  fromChatId: string
+): Promise<ChatsCreateResponse> => {
   try {
-    // This requires V0_API_KEY to be set in environment variables
     const { v0 } = await import("v0-sdk");
 
-    const response = await v0.chats.create({
-      message,
-      modelConfiguration: modelConfiguration || {
-        modelId: "v0-1.5-lg",
-        imageGenerations: true,
-        thinking: false,
-      },
-      chatPrivacy,
-    });
+    // Check if fork method exists
+    if ('fork' in v0.chats && typeof v0.chats.fork === 'function') {
+      console.log(`🔄 Attempting to fork from chat: ${fromChatId}`);
+      
+      // Try different parameter formats for the fork method
+      let response;
+      
+      try {
+        // Try format 1: { chatId: string }
+        response = await (v0.chats as any).fork({ chatId: fromChatId });
+      } catch (error1) {
+        console.log(`❌ Fork attempt 1 failed:`, error1);
+        
+        try {
+          // Try format 2: { id: string }
+          response = await (v0.chats as any).fork({ id: fromChatId });
+        } catch (error2) {
+          console.log(`❌ Fork attempt 2 failed:`, error2);
+          
+          try {
+            // Try format 3: direct string parameter
+            response = await (v0.chats as any).fork(fromChatId);
+          } catch (error3) {
+            console.log(`❌ Fork attempt 3 failed:`, error3);
+            throw new Error(`All fork attempts failed. Last error: ${error3}`);
+          }
+        }
+      }
+      
+      console.log(`✅ Successfully forked chat: ${response.id}`);
+      return response;
+    } else {
+      throw new Error("Fork method not available in SDK");
+    }
+  } catch (error) {
+    console.error("V0 Fork Error:", error);
+    throw error;
+  }
+};
+
+// Create a new chat (fallback when fork is not available)
+const createV0Chat = async (
+  request: ChatsCreateRequest
+): Promise<ChatsCreateResponse> => {
+  try {
+    const { v0 } = await import("v0-sdk");
+
+    const response = await v0.chats.create(request);
 
     return response;
   } catch (error) {
     console.error("V0 SDK Error:", error);
+    throw error;
+  }
+};
+
+// Send a message to an existing chat
+const sendV0Message = async (
+  request: ChatsCreateMessageRequest
+): Promise<any> => {
+  try {
+    const { v0 } = await import("v0-sdk");
+
+    const response = await v0.chats.createMessage(request);
+
+    return response;
+  } catch (error) {
+    console.error("V0 Message Error:", error);
     throw error;
   }
 };
@@ -50,19 +99,82 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      // Call the REAL v0 API
-      const v0Response = await createV0Chat(
-        message,
-        modelConfiguration,
-        chatPrivacy
-      );
+      // STEP 1: Try to fork from the ecommerce template
+      let v0Response: ChatsCreateResponse;
+      
+      try {
+        console.log(`🔄 Attempting to fork from ecommerce template: ${ECOMMERCE_TEMPLATE_CHAT_ID}`);
+        v0Response = await forkV0Chat(ECOMMERCE_TEMPLATE_CHAT_ID);
+        
+        // STEP 2: Send customization message to the forked chat
+        console.log(`📝 Sending customization prompt to forked chat: ${v0Response.id}`);
+        const messageRequest: ChatsCreateMessageRequest = {
+          chatId: v0Response.id,
+          message: message,
+        };
+        
+        const messageResponse = await sendV0Message(messageRequest);
+        console.log(`✅ Customization message sent successfully`);
+        
+        // Update the response with the latest content from the message
+        v0Response = {
+          ...v0Response,
+          text: messageResponse.text || v0Response.text,
+          demo: messageResponse.demo || v0Response.demo,
+        };
+        
+      } catch (forkError) {
+        console.log(`❌ Fork failed, trying template-inspired approach:`, forkError);
+        
+        // Fallback 1: Create new chat with template reference  
+        const templateInspiredPrompt = `Using the ecommerce template structure from v0.dev/chat/${ECOMMERCE_TEMPLATE_CHAT_ID} as inspiration, please customize it with these details:
+
+${message}
+
+Focus on re-theming the existing ecommerce template structure rather than building from scratch:
+- Keep the proven ecommerce layout and functionality
+- Apply the specified brand colors and styling
+- Update store name, content, and industry-specific details
+- Maintain existing PayPal integration and shopping cart features
+- Preserve responsive design and modern ecommerce patterns`;
+
+        try {
+          const chatRequest: ChatsCreateRequest = {
+            message: templateInspiredPrompt,
+            modelConfiguration: modelConfiguration || {
+              modelId: "v0-1.5-lg",
+              imageGenerations: true,
+              thinking: false,
+            },
+            chatPrivacy: chatPrivacy as "private" | "public" | "team-edit" | "team" | "unlisted",
+          };
+
+          v0Response = await createV0Chat(chatRequest);
+          console.log(`✅ Created template-inspired chat: ${v0Response.id}`);
+        } catch (templateError) {
+          console.log(`❌ Template-inspired approach failed, using original prompt:`, templateError);
+          
+          // Final fallback: Original approach
+          const chatRequest: ChatsCreateRequest = {
+            message,
+            modelConfiguration: modelConfiguration || {
+              modelId: "v0-1.5-lg",
+              imageGenerations: true,
+              thinking: false,
+            },
+            chatPrivacy: chatPrivacy as "private" | "public" | "team-edit" | "team" | "unlisted",
+          };
+
+          v0Response = await createV0Chat(chatRequest);
+        }
+      }
 
       console.log("✅ Successfully called real v0 API:", v0Response.id);
       console.log("Chat response:", JSON.stringify(v0Response, null, 2));
 
       // The v0 response should already include the demo URL for iframe preview
       // No need for separate iframe call - chat.demo is already available
-      const iframeUrl = (v0Response as any).demo || "";
+      const iframeUrl = ('demo' in v0Response ? v0Response.demo : '') || "";
 
       console.log("📦 Demo URL from chat response:", iframeUrl);
 

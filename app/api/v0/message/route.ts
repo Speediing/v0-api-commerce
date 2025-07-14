@@ -1,36 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-
-interface V0MessageFile {
-  lang: string;
-  meta: {
-    title: string;
-  };
-  source: string;
-}
-
-interface V0MessageResponse {
-  id: string;
-  object: string;
-  chatId: string;
-  url: string;
-  text: string;
-  files?: V0MessageFile[];
-  demo?: string;
-}
+import type { ChatsCreateMessageRequest, ChatsCreateMessageResponse } from 'v0-sdk';
 
 const createV0Message = async (
-  chatId: string,
-  message: string
-): Promise<V0MessageResponse> => {
+  request: ChatsCreateMessageRequest
+): Promise<ChatsCreateMessageResponse> => {
   try {
     const { v0 } = await import("v0-sdk");
 
-    const response = await v0.chats.createMessage({
-      chatId,
-      message,
-    });
+    const response = await v0.chats.createMessage(request);
 
-    return response as V0MessageResponse;
+    return response;
   } catch (error) {
     console.error("V0 SDK Error:", error);
     throw error;
@@ -55,7 +34,12 @@ export async function POST(request: NextRequest) {
 
     try {
       // Call the REAL v0 API to create a message
-      const v0Response = await createV0Message(chatId, message);
+      const messageRequest: ChatsCreateMessageRequest = {
+        chatId,
+        message,
+      };
+
+      const v0Response = await createV0Message(messageRequest);
 
       console.log("✅ Successfully created v0 message:", v0Response.id);
 
