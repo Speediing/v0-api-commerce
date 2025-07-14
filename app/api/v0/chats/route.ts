@@ -117,11 +117,18 @@ export async function POST(request: NextRequest) {
         console.log(`✅ Customization message sent successfully`);
         
         // Update the response with the latest content from the message
+        console.log("📋 Message response:", JSON.stringify(messageResponse, null, 2));
+        console.log("📋 Original chat demo:", v0Response.demo);
+        console.log("📋 Message demo:", messageResponse.demo);
+        
+        // Use the message demo URL if available, otherwise keep original
         v0Response = {
           ...v0Response,
           text: messageResponse.text || v0Response.text,
           demo: messageResponse.demo || v0Response.demo,
         };
+        
+        console.log("📋 Final demo URL:", v0Response.demo);
         
       } catch (forkError) {
         console.log(`❌ Fork failed, trying template-inspired approach:`, forkError);
@@ -170,19 +177,15 @@ Focus on re-theming the existing ecommerce template structure rather than buildi
       }
 
       console.log("✅ Successfully called real v0 API:", v0Response.id);
-      console.log("Chat response:", JSON.stringify(v0Response, null, 2));
+      console.log("📦 Full v0 response:", JSON.stringify(v0Response, null, 2));
+      console.log("📦 Demo URL from SDK:", v0Response.demo);
+      console.log("📦 Chat URL from SDK:", v0Response.url);
 
-      // The v0 response should already include the demo URL for iframe preview
-      // No need for separate iframe call - chat.demo is already available
-      const iframeUrl = ('demo' in v0Response ? v0Response.demo : '') || "";
-
-      console.log("📦 Demo URL from chat response:", iframeUrl);
-
-      // Return the response with the iframe URL
+      // Per SDK docs: chat.demo should be ready for iframe embedding
       return NextResponse.json({
         ...v0Response,
         v0Url: v0Response.url,
-        demo: iframeUrl || v0Response.url, // Use demo URL for preview, fallback to chat URL
+        demo: v0Response.demo, // Use chat.demo directly as per SDK documentation
       });
     } catch (v0Error) {
       console.error("❌ V0 API call failed, falling back to mock:", v0Error);

@@ -19,6 +19,13 @@ export interface StoreData {
   currency: string;
 }
 
+export interface RefinementMessage {
+  id: string;
+  message: string;
+  timestamp: string;
+  response?: string;
+}
+
 export interface GeneratedStore {
   id: string;
   generatedAt: string;
@@ -28,6 +35,7 @@ export interface GeneratedStore {
   demo?: string; // Added for iframe URL
   content: string; // The generated store code
   _isMock?: boolean; // Added for mock indicator
+  refinements?: RefinementMessage[]; // Track refinement history
 }
 
 interface V0File {
@@ -188,7 +196,8 @@ Keep all existing functionality and layout - just customize the branding, colors
 
 export async function regenerateStore(
   chatId: string,
-  feedback: string
+  feedback: string,
+  previousStore?: GeneratedStore
 ): Promise<GeneratedStore> {
   try {
     // Send a message to the existing chat with feedback
@@ -216,13 +225,29 @@ export async function regenerateStore(
       storeContent = messageResponse.text || "";
     }
 
+    // Create new refinement entry
+    const newRefinement: RefinementMessage = {
+      id: `refinement-${Date.now()}`,
+      message: feedback,
+      timestamp: new Date().toISOString(),
+      response: messageResponse.text,
+    };
+
+    // Combine with previous refinements
+    const refinements = [
+      ...(previousStore?.refinements || []),
+      newRefinement,
+    ];
+
     return {
       id: `v0-store-${chatId}-updated`,
       generatedAt: new Date().toISOString(),
-      storeData: {} as StoreData, // Would need to be stored/retrieved
+      storeData: previousStore?.storeData || ({} as StoreData),
       v0ChatId: chatId,
       v0Url: chatResponse.url,
+      demo: messageResponse.demo, // Update the demo URL for the new iframe preview
       content: storeContent,
+      refinements,
     };
   } catch (error) {
     console.error("Error regenerating store:", error);

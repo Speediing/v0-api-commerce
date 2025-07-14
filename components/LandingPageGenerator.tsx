@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { ShoppingBag, Sparkles, Download, RotateCcw } from "lucide-react";
 import { StoreQuestionnaire } from "./StoreQuestionnaire";
 import { StorePreview } from "./StorePreview";
-import { generateStoreWithV0, type StoreData, type GeneratedStore } from "@/lib/v0-client";
+import { generateStoreWithV0, regenerateStore, type StoreData, type GeneratedStore } from "@/lib/v0-client";
 
 export function StoreGenerator() {
   const [step, setStep] = useState<"questionnaire" | "preview" | "editing">(
@@ -14,6 +14,7 @@ export function StoreGenerator() {
   const [generatedStore, setGeneratedStore] =
     useState<GeneratedStore | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isRefining, setIsRefining] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleQuestionnaireComplete = async (data: StoreData) => {
@@ -57,6 +58,28 @@ export function StoreGenerator() {
     setStoreData(null);
     setGeneratedStore(null);
     setError(null);
+  };
+
+  const handleRefineStore = async (feedback: string) => {
+    if (!generatedStore?.v0ChatId) return;
+
+    setIsRefining(true);
+    setError(null);
+
+    try {
+      const refinedStore = await regenerateStore(
+        generatedStore.v0ChatId, 
+        feedback, 
+        generatedStore
+      );
+      setGeneratedStore(refinedStore);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to refine store"
+      );
+    } finally {
+      setIsRefining(false);
+    }
   };
 
   return (
@@ -143,7 +166,12 @@ export function StoreGenerator() {
               </div>
             </div>
 
-            <StorePreview store={generatedStore} isLoading={isGenerating} />
+            <StorePreview 
+              store={generatedStore} 
+              isLoading={isGenerating}
+              onRefine={handleRefineStore}
+              isRefining={isRefining}
+            />
           </div>
         )}
 

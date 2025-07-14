@@ -1,18 +1,32 @@
 "use client";
 
-import React from "react";
-import { Loader2, Eye, ExternalLink } from "lucide-react";
+import React, { useState } from "react";
+import { Loader2, Eye, ExternalLink, Send, MessageCircle, Clock } from "lucide-react";
 import { type GeneratedStore } from "@/lib/v0-client";
 
 export interface StorePreviewProps {
   store: GeneratedStore;
   isLoading?: boolean;
+  onRefine?: (feedback: string) => void;
+  isRefining?: boolean;
 }
 
 export function StorePreview({
   store,
   isLoading,
+  onRefine,
+  isRefining,
 }: StorePreviewProps) {
+  const [refinementMessage, setRefinementMessage] = useState("");
+  const [showRefinement, setShowRefinement] = useState(true);
+
+  const handleRefine = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (refinementMessage.trim() && onRefine) {
+      onRefine(refinementMessage.trim());
+      setRefinementMessage("");
+    }
+  };
   if (isLoading) {
     return (
       <div className="bg-white rounded-xl shadow-lg p-8">
@@ -48,7 +62,7 @@ export function StorePreview({
           className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ExternalLink className="w-4 h-4" />
-          <span>Open in New Tab</span>
+          <span>{store.demo ? "Open Preview" : "View in v0.dev"}</span>
         </button>
       </div>
 
@@ -76,9 +90,9 @@ export function StorePreview({
 
           {/* Preview Content */}
           <div className="p-6 min-h-[600px]">
-            {store.demo || store.v0Url ? (
+            {store.demo ? (
               <iframe
-                src={store.demo || store.v0Url}
+                src={store.demo}
                 className="w-full h-full min-h-[500px] border-0 rounded-lg"
                 title="Store Preview"
                 sandbox="allow-scripts allow-same-origin allow-forms"
@@ -86,10 +100,27 @@ export function StorePreview({
             ) : (
               <div className="flex items-center justify-center h-full border-2 border-dashed border-gray-300 rounded-lg">
                 <div className="text-center text-gray-500">
-                  <div className="mb-2">No preview available</div>
-                  <div className="text-sm">v0 iframe URL not found</div>
-                  <div className="text-xs mt-2 text-red-500">
-                    Expected: store.demo to contain iframe URL
+                  <div className="mb-2">Preview not available</div>
+                  <div className="text-sm">
+                    {store._isMock 
+                      ? "Using mock data - set V0_API_KEY environment variable to see real preview"
+                      : "Demo URL not provided by v0 SDK (check console logs for debugging)"
+                    }
+                  </div>
+                  {store.v0Url && (
+                    <div className="mt-3">
+                      <a
+                        href={store.v0Url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-700 underline text-sm"
+                      >
+                        View in v0.dev instead →
+                      </a>
+                    </div>
+                  )}
+                  <div className="mt-2 text-xs text-gray-400">
+                    Expected: chat.demo from v0 SDK
                   </div>
                 </div>
               </div>
@@ -151,6 +182,94 @@ export function StorePreview({
           )}
         </div>
       </div>
+
+      {/* Refinement Interface */}
+      {onRefine && (
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-2">
+              <MessageCircle className="w-5 h-5 text-blue-500" />
+              <h3 className="text-lg font-semibold text-gray-900">
+                Refine Your Store
+              </h3>
+            </div>
+            <button
+              onClick={() => setShowRefinement(!showRefinement)}
+              className="text-sm text-blue-600 hover:text-blue-700"
+            >
+              {showRefinement ? "Hide" : "Show"}
+            </button>
+          </div>
+
+          {showRefinement && (
+            <div className="space-y-4">
+              <p className="text-gray-600 text-sm">
+                Tell us what you'd like to change about your store. For example:
+                "Make it more colorful", "Add a testimonials section", "Change the layout", etc.
+              </p>
+              
+              <form onSubmit={handleRefine} className="space-y-3">
+                <textarea
+                  value={refinementMessage}
+                  onChange={(e) => setRefinementMessage(e.target.value)}
+                  placeholder="Describe the changes you'd like to make..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
+                  disabled={isRefining}
+                />
+                
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={!refinementMessage.trim() || isRefining}
+                    className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isRefining ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Refining...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Send Refinement</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+
+              {/* Refinement History */}
+              {store.refinements && store.refinements.length > 0 && (
+                <div className="mt-6 pt-4 border-t border-gray-200">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                    <Clock className="w-4 h-4 mr-2" />
+                    Refinement History ({store.refinements.length})
+                  </h4>
+                  <div className="space-y-3 max-h-40 overflow-y-auto">
+                    {store.refinements.slice().reverse().map((refinement) => (
+                      <div
+                        key={refinement.id}
+                        className="bg-gray-50 rounded-md p-3 text-sm"
+                      >
+                        <div className="text-gray-700 font-medium mb-1">
+                          Request:
+                        </div>
+                        <div className="text-gray-600 mb-2">
+                          "{refinement.message}"
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {new Date(refinement.timestamp).toLocaleString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
