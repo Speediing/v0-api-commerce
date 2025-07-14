@@ -120,12 +120,14 @@ export async function POST(request: NextRequest) {
         console.log("📋 Message response:", JSON.stringify(messageResponse, null, 2));
         console.log("📋 Original chat demo:", v0Response.demo);
         console.log("📋 Message demo:", messageResponse.demo);
+        console.log("📋 Message files:", messageResponse.files);
         
         // Use the message demo URL if available, otherwise keep original
         v0Response = {
           ...v0Response,
           text: messageResponse.text || v0Response.text,
           demo: messageResponse.demo || v0Response.demo,
+          files: messageResponse.files || v0Response.files || [], // Get files from message response
         };
         
         console.log("📋 Final demo URL:", v0Response.demo);
@@ -186,6 +188,7 @@ Focus on re-theming the existing ecommerce template structure rather than buildi
         ...v0Response,
         v0Url: v0Response.url,
         demo: v0Response.demo, // Use chat.demo directly as per SDK documentation
+        files: v0Response.files || [], // Include files from v0 SDK response
       });
     } catch (v0Error) {
       console.error("❌ V0 API call failed, falling back to mock:", v0Error);

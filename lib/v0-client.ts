@@ -36,11 +36,18 @@ export interface GeneratedStore {
   content: string; // The generated store code
   _isMock?: boolean; // Added for mock indicator
   refinements?: RefinementMessage[]; // Track refinement history
+  files?: V0File[]; // Store the generated files
 }
 
 interface V0File {
   lang: string;
   source: string;
+  name?: string;
+  content?: string;
+  meta?: {
+    file?: string;
+    title?: string;
+  };
 }
 
 interface V0MessageResponse {
@@ -181,6 +188,7 @@ Keep all existing functionality and layout - just customize the branding, colors
       v0Url: response.url,
       demo: response.demo, // The iframe URL for preview
       content: response.text || "", // The generated store React component code
+      files: response.files || [], // Store the generated files
     };
 
     return generatedStore;
@@ -248,6 +256,7 @@ export async function regenerateStore(
       demo: messageResponse.demo, // Update the demo URL for the new iframe preview
       content: storeContent,
       refinements,
+      files: messageResponse.files || [], // Include updated files
     };
   } catch (error) {
     console.error("Error regenerating store:", error);
