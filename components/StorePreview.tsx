@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Loader2, Eye, ExternalLink, Send, MessageCircle, Clock } from "lucide-react";
+import { Loader2, Eye, ExternalLink, Send, MessageCircle, Clock, Rocket } from "lucide-react";
 import { type GeneratedStore } from "@/lib/v0-client";
 
 export interface StorePreviewProps {
@@ -9,6 +9,7 @@ export interface StorePreviewProps {
   isLoading?: boolean;
   onRefine?: (feedback: string) => void;
   isRefining?: boolean;
+  onDeploy?: (deploymentInfo: any) => void;
 }
 
 export function StorePreview({
@@ -16,15 +17,60 @@ export function StorePreview({
   isLoading,
   onRefine,
   isRefining,
+  onDeploy,
 }: StorePreviewProps) {
   const [refinementMessage, setRefinementMessage] = useState("");
   const [showRefinement, setShowRefinement] = useState(true);
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [deploymentResult, setDeploymentResult] = useState<any>(null);
 
   const handleRefine = (e: React.FormEvent) => {
     e.preventDefault();
     if (refinementMessage.trim() && onRefine) {
       onRefine(refinementMessage.trim());
       setRefinementMessage("");
+    }
+  };
+
+  const handleDeploy = async () => {
+    if (!store.v0ChatId || !store.storeData?.storeName) return;
+    
+    setIsDeploying(true);
+    setDeploymentResult(null);
+    
+    try {
+      const response = await fetch('/api/deploy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chatId: store.v0ChatId,
+          projectName: store.storeData.storeName,
+          storeData: store.storeData,
+        }),
+      });
+
+      const result = await response.json();
+      console.log('🔍 Deploy response:', result);
+      
+      if (result.success) {
+        console.log('✅ Deployment successful, setting result:', result.deployment);
+        setDeploymentResult(result.deployment);
+        if (onDeploy) {
+          onDeploy(result.deployment);
+        }
+      } else {
+        console.log('❌ Deployment failed:', result.error);
+        throw new Error(result.error || 'Deployment failed');
+      }
+    } catch (error) {
+      console.error('Deployment error:', error);
+      setDeploymentResult({
+        error: error instanceof Error ? error.message : 'Unknown deployment error'
+      });
+    } finally {
+      setIsDeploying(false);
     }
   };
   if (isLoading) {
@@ -63,6 +109,24 @@ export function StorePreview({
         >
           <ExternalLink className="w-4 h-4" />
           <span>{store.demo ? "Open Preview" : "View in v0.dev"}</span>
+        </button>
+
+        <button
+          onClick={handleDeploy}
+          disabled={isDeploying || !store.v0ChatId}
+          className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isDeploying ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Deploying...</span>
+            </>
+          ) : (
+            <>
+              <Rocket className="w-4 h-4" />
+              <span>Deploy to Vercel</span>
+            </>
+          )}
         </button>
       </div>
 
@@ -182,6 +246,63 @@ export function StorePreview({
           )}
         </div>
       </div>
+
+      {/* Deployment Result */}
+      {deploymentResult && (
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          {deploymentResult.error ? (
+            <div className="bg-red-50 border border-red-200 rounded-md p-4">
+              <div className="text-red-700 font-medium">Deployment Failed</div>
+              <div className="text-red-600 text-sm mt-1">{deploymentResult.error}</div>
+            </div>
+          ) : (
+            <div className="bg-green-50 border border-green-200 rounded-md p-4">
+              <div className="text-green-700 font-medium mb-3">
+                🚀 Deployment Successful!
+              </div>
+              <div className="space-y-2 text-sm">
+                <div>
+                  <span className="font-medium text-gray-700">Live URL:</span>
+                  <a
+                    href={deploymentResult.deploymentUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-700 ml-2 underline"
+                  >
+                    {deploymentResult.deploymentUrl}
+                  </a>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-700">Status:</span>
+                  <span className="ml-2 text-green-600">{deploymentResult.status}</span>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-700">Deployment ID:</span>
+                  <span className="ml-2 text-gray-600 font-mono text-xs">{deploymentResult.id}</span>
+                </div>
+              </div>
+              <div className="mt-4 flex space-x-3">
+                <button
+                  onClick={() => window.open(deploymentResult.deploymentUrl, "_blank")}
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span>Visit Live Site</span>
+                </button>
+                {deploymentResult.inspectorUrl && (
+                  <button
+                    onClick={() => window.open(deploymentResult.inspectorUrl, "_blank")}
+                    className="flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+                  >
+                    <Eye className="w-4 h-4" />
+                    <span>View in Vercel</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Refinement Interface */}
       {onRefine && (
