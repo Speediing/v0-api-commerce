@@ -46,14 +46,14 @@ const defaultProjectFiles = {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
-    "date-fns": "^3.6.0",
+    "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.1",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
     "next-themes": "^0.4.4",
     "react": "^19",
-    "react-day-picker": "8.10.1",
+    "react-day-picker": "^9.0.0",
     "react-dom": "^19",
     "react-hook-form": "^7.54.1",
     "react-resizable-panels": "^2.1.7",
@@ -74,7 +74,7 @@ const defaultProjectFiles = {
   }
 }`,
 
-  "pnpm-lock.json": `lockfileVersion: '9.0'
+  "pnpm-lock.yaml": `lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
@@ -733,14 +733,14 @@ interface V0MessageWithFiles {
 // Function to get embedded default files
 function getDefaultFiles(): VercelFile[] {
   const files: VercelFile[] = [];
-  
+
   Object.entries(defaultProjectFiles).forEach(([filePath, content]) => {
     files.push({
       file: filePath,
-      data: content
+      data: content,
     });
   });
-  
+
   console.log(`📁 Using ${files.length} embedded default files`);
   return files;
 }
