@@ -707,6 +707,7 @@ interface VercelFile {
 interface DeploymentPayload {
   name: string;
   files: VercelFile[];
+  target?: "production";
   projectSettings?: {
     framework: "nextjs";
     nodeVersion: "20.x";
@@ -994,6 +995,7 @@ export async function POST(request: NextRequest) {
     const deploymentPayload: DeploymentPayload = {
       name: "v0-pay-pal", // Use your existing project name
       files,
+      target: "production",
       projectSettings: {
         framework: "nextjs",
         nodeVersion: "20.x",
