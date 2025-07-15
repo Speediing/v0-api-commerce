@@ -84,7 +84,10 @@ async function callV0API(endpoint: string, data: V0ApiData) {
     throw new Error(`V0 API Error: ${error}`);
   }
 
-  return response.json();
+  const responseData = await response.json();
+  console.log("🔍 callV0API response:", responseData);
+  console.log("🔍 callV0API response files:", responseData.files);
+  return responseData;
 }
 
 export async function generateComponentWithV0(
@@ -191,6 +194,9 @@ Keep all existing functionality and layout - just customize the branding, colors
       files: response.files || [], // Store the generated files
     };
 
+    console.log("🔍 generateStoreWithV0 final result:", generatedStore);
+    console.log("🔍 generateStoreWithV0 files count:", generatedStore.files.length);
+    
     return generatedStore;
   } catch (error) {
     console.error("Error generating store with V0:", error);
@@ -247,7 +253,7 @@ export async function regenerateStore(
       newRefinement,
     ];
 
-    return {
+    const refinedStore = {
       id: `v0-store-${chatId}-updated`,
       generatedAt: new Date().toISOString(),
       storeData: previousStore?.storeData || ({} as StoreData),
@@ -258,6 +264,11 @@ export async function regenerateStore(
       refinements,
       files: messageResponse.files || [], // Include updated files
     };
+
+    console.log("🔍 regenerateStore final result:", refinedStore);
+    console.log("🔍 regenerateStore files count:", refinedStore.files.length);
+    
+    return refinedStore;
   } catch (error) {
     console.error("Error regenerating store:", error);
     throw new Error(

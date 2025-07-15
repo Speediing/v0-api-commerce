@@ -92,6 +92,7 @@ export async function POST(request: NextRequest) {
             lang: "tsx",
             meta: {
               title: "Updated Landing Page",
+              file: "app/page.tsx", // Add the file property for deployment
             },
             source: `// Updated component based on feedback\nimport React from 'react';\n\nexport default function UpdatedLandingPage() {\n  return (\n    <div className="min-h-screen bg-white">\n      <div className="container mx-auto px-4 py-16">\n        <h1 className="text-5xl font-bold text-center mb-8">Improved Design</h1>\n        <p className="text-center text-gray-600 mb-8">Updated based on your feedback: "${message}"</p>\n      </div>\n    </div>\n  );\n}`,
           },

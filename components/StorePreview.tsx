@@ -51,14 +51,20 @@ export function StorePreview({
 
   // Set generated files from store data
   useEffect(() => {
+    console.log("🔍 StorePreview useEffect - store.files:", store.files);
+    console.log("🔍 StorePreview useEffect - full store:", store);
+    
     if (store.files && store.files.length > 0) {
+      console.log("🔍 Processing store.files:", store.files);
       const files = store.files.map((file, index) => ({
         name: file.meta?.file || file.name || file.meta?.title || `component-${index + 1}.tsx`,
         content: file.source || file.content || '',
         lang: file.lang || 'typescriptreact'
       }));
+      console.log("🔍 Mapped files for display:", files);
       setGeneratedFiles(files);
     } else {
+      console.log("🔍 No files in store.files, setting empty array");
       setGeneratedFiles([]);
     }
   }, [store.files]);
@@ -83,7 +89,9 @@ export function StorePreview({
 
   const handleDeploy = async () => {
     if (!store.v0ChatId || !store.storeData?.storeName) return;
-    console.log(store);
+    console.log("🔍 Full store state:", store);
+    console.log("🔍 Store files:", store.files);
+    console.log("🔍 Generated files in state:", generatedFiles);
     setIsDeploying(true);
     setDeploymentResult(null);
 
@@ -94,9 +102,10 @@ export function StorePreview({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          chatId: "jNT7o1DwPZL", // Use the chat with your actual hhhh store
+          chatId: store.v0ChatId, // Use the actual chat ID from the store
           projectName: store.storeData.storeName,
           storeData: store.storeData,
+          generatedFiles: store.files || [], // Pass the v0 generated files directly
         }),
       });
 

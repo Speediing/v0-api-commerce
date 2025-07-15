@@ -24,6 +24,8 @@ export function StoreGenerator() {
 
     try {
       const result = await generateStoreWithV0(data);
+      console.log("🔍 Generated store result:", result);
+      console.log("🔍 Generated store files:", result.files);
       setGeneratedStore(result);
       setStep("preview");
     } catch (err) {
@@ -43,6 +45,8 @@ export function StoreGenerator() {
 
     try {
       const result = await generateStoreWithV0(storeData);
+      console.log("🔍 Regenerated store result:", result);
+      console.log("🔍 Regenerated store files:", result.files);
       setGeneratedStore(result);
     } catch (err) {
       setError(
@@ -72,6 +76,8 @@ export function StoreGenerator() {
         feedback, 
         generatedStore
       );
+      console.log("🔍 Refined store result:", refinedStore);
+      console.log("🔍 Refined store files:", refinedStore.files);
       setGeneratedStore(refinedStore);
     } catch (err) {
       setError(

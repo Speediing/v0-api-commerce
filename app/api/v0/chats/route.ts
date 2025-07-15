@@ -290,6 +290,7 @@ Focus on re-theming the existing ecommerce template structure rather than buildi
             lang: "tsx",
             meta: {
               title: "Landing Page (Mock)",
+              file: "app/page.tsx", // Add the file property for deployment
             },
             source: generateMockComponent(message),
           },
