@@ -1038,8 +1038,8 @@ export async function POST(request: NextRequest) {
       success: true,
       deployment: {
         id: deployment.id,
-        url: deployment.url,
-        deploymentUrl: `https://${deployment.url}`,
+        url: deployment.alias || deployment.url,
+        deploymentUrl: `https://${deployment.alias || deployment.url}`,
         status: deployment.readyState || deployment.status,
         inspectorUrl: `https://vercel.com/${teamId ? `${teamId}/` : ""}${
           deployment.name
