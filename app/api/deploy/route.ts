@@ -1034,12 +1034,20 @@ export async function POST(request: NextRequest) {
     const deployment = await response.json();
     console.log("✅ Deployment successful:", deployment);
 
+    // Get the primary URL, handling cases where URL might be an array or comma-separated
+    let primaryUrl = deployment.alias || deployment.url;
+    if (Array.isArray(primaryUrl)) {
+      primaryUrl = primaryUrl[0];
+    } else if (typeof primaryUrl === 'string' && primaryUrl.includes(',')) {
+      primaryUrl = primaryUrl.split(',')[0];
+    }
+
     return NextResponse.json({
       success: true,
       deployment: {
         id: deployment.id,
-        url: deployment.alias || deployment.url,
-        deploymentUrl: `https://${deployment.alias || deployment.url}`,
+        url: primaryUrl,
+        deploymentUrl: `https://${primaryUrl}`,
         status: deployment.readyState || deployment.status,
         inspectorUrl: `https://vercel.com/${teamId ? `${teamId}/` : ""}${
           deployment.name
