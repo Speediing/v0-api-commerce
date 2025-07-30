@@ -249,7 +249,7 @@ export default function HomePage() {
               <div className="text-sm text-gray-500">
                 <p>Secure payments powered by</p>
                 <div className="flex items-center space-x-2 mt-2">
-                  <div className="bg-[#3B82F6] text-white px-3 py-1 rounded text-xs font-medium">Stripe</div>
+                  <div className="bg-[#635BFF] text-white px-3 py-1 rounded text-xs font-medium">Stripe</div>
                 </div>
               </div>
             </div>

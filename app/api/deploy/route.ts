@@ -288,12 +288,12 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-8">
-              <h1 className="text-2xl font-bold text-blue-600">Store</h1>
+              <h1 className="text-2xl font-bold text-[#635BFF]">Store</h1>
               <nav className="hidden md:flex space-x-6">
-                <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">New</a>
-                <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">Women</a>
-                <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">Men</a>
-                <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">Sale</a>
+                <a href="#" className="text-gray-600 hover:text-[#635BFF] transition-colors">New</a>
+                <a href="#" className="text-gray-600 hover:text-[#635BFF] transition-colors">Women</a>
+                <a href="#" className="text-gray-600 hover:text-[#635BFF] transition-colors">Men</a>
+                <a href="#" className="text-gray-600 hover:text-[#635BFF] transition-colors">Sale</a>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
@@ -316,16 +316,16 @@ export default function HomePage() {
             <div className="space-y-6">
               <h2 className="text-5xl font-light text-gray-900 leading-tight">
                 Discover Your
-                <span className="block text-blue-600 font-normal">Perfect Style</span>
+                <span className="block text-[#635BFF] font-normal">Perfect Style</span>
               </h2>
               <p className="text-xl text-gray-600 leading-relaxed">
                 Curated fashion pieces that define your unique aesthetic.
               </p>
               <div className="flex space-x-4">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg">
+                <Button className="bg-[#635BFF] hover:bg-[#5A54E8] text-white px-8 py-3 text-lg">
                   Shop Now
                 </Button>
-                <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-3 text-lg">
+                <Button variant="outline" className="border-[#635BFF] text-[#635BFF] hover:bg-[#635BFF] hover:text-white px-8 py-3 text-lg">
                   View Collection
                 </Button>
               </div>
@@ -395,7 +395,7 @@ export default function HomePage() {
                       className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     {product.badge && (
-                      <Badge className={\`absolute top-3 left-3 \${product.badge === "Sale" ? "bg-red-500" : product.badge === "New" ? "bg-blue-600" : "bg-green-500"}\`}>
+                      <Badge className={\`absolute top-3 left-3 \${product.badge === "Sale" ? "bg-red-500" : product.badge === "New" ? "bg-[#635BFF]" : "bg-green-500"}\`}>
                         {product.badge}
                       </Badge>
                     )}
@@ -406,7 +406,7 @@ export default function HomePage() {
                   <div className="p-4 space-y-2">
                     <h4 className="font-medium text-gray-900">{product.name}</h4>
                     <div className="flex items-center space-x-2">
-                      <span className="text-lg font-semibold text-blue-600">{product.price}</span>
+                      <span className="text-lg font-semibold text-[#635BFF]">{product.price}</span>
                       {product.originalPrice && (
                         <span className="text-sm text-gray-500 line-through">{product.originalPrice}</span>
                       )}
@@ -417,7 +417,7 @@ export default function HomePage() {
                       ))}
                       <span className="text-sm text-gray-500 ml-2">(24)</span>
                     </div>
-                    <Button className="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white">Add to Cart</Button>
+                    <Button className="w-full mt-3 bg-[#635BFF] hover:bg-[#5A54E8] text-white">Add to Cart</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -430,7 +430,7 @@ export default function HomePage() {
       <footer className="bg-gray-50 py-16">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <h4 className="text-2xl font-bold text-blue-600 mb-4">Store</h4>
+            <h4 className="text-2xl font-bold text-[#635BFF] mb-4">Store</h4>
             <p className="text-gray-600 mb-8">Modern fashion for the contemporary lifestyle.</p>
             <div className="text-sm text-gray-500">
               <p>Secure payments powered by Stripe</p>

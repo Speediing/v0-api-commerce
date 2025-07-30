@@ -23,8 +23,8 @@ export function StoreQuestionnaire({
     shippingInfo: "",
     contactInfo: "",
     brandColors: {
-      primary: "#3B82F6",
-      secondary: "#1E40AF",
+      primary: "#635BFF",
+      secondary: "#0A2540",
     },
     storeStyle: "Modern & Minimalist",
     featuredProducts: [],
@@ -38,7 +38,7 @@ export function StoreQuestionnaire({
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-8">
-      <div className="flex items-center space-x-3 text-blue-600 mb-6">
+      <div className="flex items-center space-x-3 text-[#635BFF] mb-6">
         <ShoppingBag className="w-6 h-6" />
         <h3 className="text-xl font-semibold">Tell us about your store</h3>
       </div>
@@ -54,7 +54,7 @@ export function StoreQuestionnaire({
             onChange={(e) =>
               setFormData({ ...formData, storeName: e.target.value })
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#635BFF]"
             placeholder="Enter your store name"
             required
           />
@@ -70,7 +70,7 @@ export function StoreQuestionnaire({
             onChange={(e) =>
               setFormData({ ...formData, targetAudience: e.target.value })
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#635BFF]"
             placeholder="e.g., Young professionals, Fashion enthusiasts"
             required
           />
@@ -85,7 +85,7 @@ export function StoreQuestionnaire({
             onChange={(e) =>
               setFormData({ ...formData, storeDescription: e.target.value })
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#635BFF]"
             placeholder="Describe what your store sells and what makes it special"
             rows={3}
             required
@@ -102,7 +102,7 @@ export function StoreQuestionnaire({
             onChange={(e) =>
               setFormData({ ...formData, shippingInfo: e.target.value })
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#635BFF]"
             placeholder="e.g., Free shipping on orders over $50"
           />
         </div>
@@ -110,7 +110,7 @@ export function StoreQuestionnaire({
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-[#635BFF] text-white rounded-md hover:bg-[#5A54E8] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? (
             <>

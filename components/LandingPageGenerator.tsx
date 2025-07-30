@@ -95,7 +95,7 @@ export function StoreGenerator() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-[#635BFF] rounded-full flex items-center justify-center">
                 <ShoppingBag className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -123,7 +123,7 @@ export function StoreGenerator() {
         {step === "questionnaire" && (
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-[#635BFF] rounded-full flex items-center justify-center mx-auto mb-4">
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
@@ -165,7 +165,7 @@ export function StoreGenerator() {
                   <span>Regenerate</span>
                 </button>
 
-                <button className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                <button className="flex items-center space-x-2 px-4 py-2 bg-[#635BFF] text-white rounded-md hover:bg-[#5A54E8]">
                   <Download className="w-4 h-4" />
                   <span>Export</span>
                 </button>
