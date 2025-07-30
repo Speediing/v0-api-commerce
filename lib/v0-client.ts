@@ -162,7 +162,7 @@ Please update the existing template to:
 - Update content to match the ${storeData.industry} industry
 - Adjust styling to be ${storeData.storeStyle.toLowerCase()}
 - Update any placeholder text to reflect the target audience and store description
-- Ensure PayPal remains the payment method
+- Ensure Stripe remains the payment method
 ${storeData.shippingInfo ? `- Update shipping information to: ${storeData.shippingInfo}` : ""}
 
 Keep all existing functionality and layout - just customize the branding, colors, and content.`;

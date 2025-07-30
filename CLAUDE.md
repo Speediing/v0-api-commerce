@@ -11,13 +11,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Architecture
 
-This is a Next.js 15 application that integrates with the v0.dev API to generate PayPal-powered ecommerce stores and React components. The application serves as a store builder with a visual interface.
+This is a Next.js 15 application that integrates with the v0.dev API to generate Stripe-powered ecommerce stores and React components. The application serves as a store builder with a visual interface.
 
 ### Core Components
 
 - **StoreGenerator** (`components/LandingPageGenerator.tsx`) - Main entry point, handles store questionnaire and ecommerce store generation
 - **Builder** (`components/Builder.tsx`) - Visual web builder with drag-and-drop functionality using @dnd-kit
-- **v0-client** (`lib/v0-client.ts`) - Client library for v0.dev API integration, handles component and store generation with PayPal integration
+- **v0-client** (`lib/v0-client.ts`) - Client library for v0.dev API integration, handles component and store generation with Stripe integration
 
 ### API Structure
 

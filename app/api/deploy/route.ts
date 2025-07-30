@@ -433,7 +433,7 @@ export default function HomePage() {
             <h4 className="text-2xl font-bold text-blue-600 mb-4">Store</h4>
             <p className="text-gray-600 mb-8">Modern fashion for the contemporary lifestyle.</p>
             <div className="text-sm text-gray-500">
-              <p>Secure payments powered by PayPal</p>
+              <p>Secure payments powered by Stripe</p>
             </div>
           </div>
         </div>

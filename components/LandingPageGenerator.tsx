@@ -100,7 +100,7 @@ export function StoreGenerator() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  PayPal Store Builder
+                  Stripe Store Builder
                 </h1>
               </div>
             </div>
@@ -127,12 +127,12 @@ export function StoreGenerator() {
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Build Your PayPal Store
+                Build Your Stripe Store
               </h2>
               <p className="text-lg text-gray-600">
                 Answer a few questions about your store and we&apos;ll
                 generate a professional ecommerce website with integrated
-                PayPal payments ready to sell your products.
+                Stripe payments ready to sell your products.
               </p>
             </div>
 
@@ -148,7 +148,7 @@ export function StoreGenerator() {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Your PayPal Store
+                  Your Stripe Store
                 </h2>
                 <p className="text-gray-600">
                   Generated for {storeData?.storeName}

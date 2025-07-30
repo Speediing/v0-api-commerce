@@ -19,7 +19,7 @@ export function StoreQuestionnaire({
     productCategories: ["Clothing & Accessories"],
     targetAudience: "",
     storeDescription: "",
-    paymentMethods: ["PayPal"],
+    paymentMethods: ["Stripe"],
     shippingInfo: "",
     contactInfo: "",
     brandColors: {
@@ -120,7 +120,7 @@ export function StoreQuestionnaire({
           ) : (
             <>
               <ShoppingBag className="w-5 h-5" />
-              <span>Generate My PayPal Store</span>
+              <span>Generate My Stripe Store</span>
             </>
           )}
         </button>

@@ -144,7 +144,7 @@ Focus on re-theming the existing ecommerce template structure rather than buildi
 - Keep the proven ecommerce layout and functionality
 - Apply the specified brand colors and styling
 - Update store name, content, and industry-specific details
-- Maintain existing PayPal integration and shopping cart features
+- Maintain existing Stripe integration and shopping cart features
 - Preserve responsive design and modern ecommerce patterns`;
 
         try {
