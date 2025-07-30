@@ -37,8 +37,8 @@ export function StoreQuestionnaire({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-8">
-      <div className="flex items-center space-x-3 text-[#635BFF] mb-6">
+    <div className="bg-white rounded-lg border border-gray-200 p-8">
+      <div className="flex items-center space-x-3 text-gray-900 mb-6">
         <ShoppingBag className="w-6 h-6" />
         <h3 className="text-xl font-semibold">Tell us about your store</h3>
       </div>
@@ -110,7 +110,7 @@ export function StoreQuestionnaire({
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-[#635BFF] text-white rounded-md hover:bg-[#5A54E8] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-[#635BFF] text-white rounded-md hover:bg-[#5B56F0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isLoading ? (
             <>

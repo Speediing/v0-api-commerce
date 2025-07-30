@@ -2,7 +2,7 @@ import { StoreGenerator } from "@/components/LandingPageGenerator";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-[#F6F9FC]">
       <StoreGenerator />
     </div>
   );

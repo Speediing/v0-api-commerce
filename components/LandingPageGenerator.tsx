@@ -91,11 +91,11 @@ export function StoreGenerator() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-[#635BFF] rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-[#635BFF] rounded-md flex items-center justify-center">
                 <ShoppingBag className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -123,8 +123,8 @@ export function StoreGenerator() {
         {step === "questionnaire" && (
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-[#635BFF] rounded-full flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-[#F6F9FC] border-2 border-[#635BFF] rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-8 h-8 text-[#635BFF]" />
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 Build Your Stripe Store
